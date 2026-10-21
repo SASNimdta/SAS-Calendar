@@ -391,3 +391,125 @@ button:focus-visible, a:focus-visible, .event-card:focus-visible, .upcoming-card
 .contact-icon-email { -webkit-mask-image: url('assets/email.svg'); mask-image: url('assets/email.svg'); }
 .contact-icon-website { -webkit-mask-image: url('assets/website.svg'); mask-image: url('assets/website.svg'); }
 .contact-icon-phone { -webkit-mask-image: url('assets/phone.svg'); mask-image: url('assets/phone.svg'); }
+
+
+/* Revamped event details modal */
+.event-modal {
+  width: min(504px, 100%);
+  max-height: min(80vh, 630px);
+  border-radius: 14px;
+}
+
+.modal-header {
+  min-height: 72px;
+  grid-template-columns: 25px minmax(0, 1fr) 30px;
+  gap: 9px;
+  padding: 16px 18px;
+  border-radius: 14px 14px 0 0;
+}
+
+.modal-header h2 {
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.modal-format-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.modal-format-icon .svg-format-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.close-modal {
+  width: 30px;
+  height: 30px;
+  font-size: 32px;
+}
+
+.modal-body {
+  padding: 18px;
+}
+
+.modal-status {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.status-pill,
+.detail-pill {
+  border-radius: 13px;
+  padding: 5px 11px;
+}
+
+.modal-information {
+  display: grid;
+  gap: 16px;
+}
+
+.detail-lines {
+  display: grid;
+  gap: 8px;
+  line-height: 1.3;
+}
+
+.detail-lines p,
+.modal-venue {
+  margin: 0;
+}
+
+.modal-date {
+  font-weight: 600;
+  color: #294553;
+}
+
+.detail-lines .secondary {
+  color: #777f83;
+}
+
+.modal-venue {
+  color: #294553;
+  line-height: 1.35;
+}
+
+.modal-divider {
+  margin: 20px 0 14px;
+}
+
+.modal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 27px;
+  font-size: 12px;
+}
+
+.format-pill {
+  background: #e7ebf1;
+  color: #31404a;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .event-modal {
+    width: min(454px, 100%);
+    max-height: 90vh;
+  }
+
+  .modal-header {
+    min-height: 65px;
+    padding: 13px 14px;
+  }
+
+  .modal-body {
+    padding: 14px;
+  }
+}

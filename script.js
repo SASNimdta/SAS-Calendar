@@ -250,32 +250,41 @@ function openModal(event, trigger) {
   const type = eventTypeDetails(event.eventType);
   const status = event.status ? statusDetails(event.status) : null;
   const format = event.format ? formatDetails(event.format) : null;
+
   elements.modalHeader.style.background = type.colour;
   elements.modalHeader.style.color = type.textColour;
   elements.modalTitle.textContent = event.name;
-  elements.modalFormatIcon.innerHTML = format && format.icon ? `<span class="svg-format-icon" ${iconStyle(format)}></span>` : '';
+  elements.modalFormatIcon.innerHTML = format && format.icon
+    ? `<span class="svg-format-icon" ${iconStyle(format)}></span>`
+    : '';
 
   const dateDetails = [
-    `<p>${escapeHtml(event.dateText)}</p>`,
+    `<p class="modal-date">${escapeHtml(event.dateText)}</p>`,
     event.time ? `<p class="secondary">${escapeHtml(event.time)}</p>` : '',
     event.duration ? `<p class="secondary">${escapeHtml(event.duration)}</p>` : ''
   ].filter(Boolean).join('');
 
+  const bottomTags = [
+    event.eventType
+      ? `<span class="detail-pill" style="background:${type.colour};color:${type.textColour}">${escapeHtml(type.label)}</span>`
+      : '',
+    event.format
+      ? `<span class="detail-pill format-pill">${escapeHtml(format.label)}</span>`
+      : ''
+  ].filter(Boolean).join('');
+
   elements.modalBody.innerHTML = `
-    ${status ? `<div class="modal-status"><span class="legend-dot" style="background:${status.colour}"></span><span class="status-pill" style="background:${status.colour};color:${status.textColour}">${escapeHtml(status.label)}</span></div>` : ''}
-    <div class="detail-row"><span class="detail-icon" aria-hidden="true">◷</span><div class="detail-lines">${dateDetails}</div></div>
-    ${event.venue ? `<div class="detail-row"><span class="detail-icon" aria-hidden="true">⌖</span><div class="detail-lines"><p>${escapeHtml(event.venue)}</p></div></div>` : ''}
-    ${(event.eventType || event.format) ? '<hr class="modal-divider">' : ''}
-    <dl>
-      ${event.eventType ? `<div class="detail-meta"><dt>Event type:</dt><dd><span class="detail-pill" style="background:${type.colour};color:${type.textColour}">${escapeHtml(type.label)}</span></dd></div>` : ''}
-      ${event.format ? `<div class="detail-meta"><dt>Format:</dt><dd><span class="detail-pill format-pill">${escapeHtml(format.label)}</span></dd></div>` : ''}
-    </dl>`;
+    ${status ? `<div class="modal-status"><span class="status-pill" style="background:${status.colour};color:${status.textColour}">${escapeHtml(status.label)}</span></div>` : ''}
+    <div class="modal-information">
+      <div class="detail-lines">${dateDetails}</div>
+      ${event.venue ? `<p class="modal-venue">${escapeHtml(event.venue)}</p>` : ''}
+    </div>
+    ${bottomTags ? `<hr class="modal-divider"><div class="modal-tags">${bottomTags}</div>` : ''}`;
 
   elements.modalBackdrop.hidden = false;
   document.body.style.overflow = 'hidden';
   elements.closeModal.focus();
 }
-
 function closeModal() {
   elements.modalBackdrop.hidden = true;
   document.body.style.overflow = '';
