@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SAS NIMDTA events calendar">
+  <title>SAS NIMDTA Event Calendar</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <main class="calendar-area">
+      <header class="brand-header">
+        <img class="sas-logo" src="assets/sas-logo.svg" alt="SAS Career Development Northern Ireland">
+        <img class="nimdta-logo" src="assets/nimdta-logo.svg" alt="Northern Ireland Medical and Dental Training Agency">
+      </header>
+
+      <section class="calendar-toolbar" aria-label="Calendar navigation">
+        <h1 id="monthTitle">Calendar</h1>
+        <div class="navigation-buttons">
+          <button id="previousMonth" type="button" aria-label="Previous month">‹&nbsp; Previous</button>
+          <button id="todayButton" type="button">Today</button>
+          <button id="nextMonth" type="button" aria-label="Next month">Next &nbsp;›</button>
+        </div>
+      </section>
+
+      <p id="loadMessage" class="load-message" role="status" aria-live="polite">Loading events…</p>
+      <section class="calendar-scroll" aria-label="Monthly events calendar">
+        <div id="calendar" class="calendar"></div>
+      </section>
+    </main>
+
+    <aside class="sidebar" aria-label="Calendar information">
+      <section>
+        <h2>Event Types</h2>
+        <div id="eventTypeLegend" class="tag-list"></div>
+      </section>
+
+      <section>
+        <h2>Status Legend</h2>
+        <div id="statusLegend" class="legend-list"></div>
+      </section>
+
+      <section>
+        <h2>Format Icons</h2>
+        <div id="formatLegend" class="legend-list"></div>
+      </section>
+
+      <section>
+        <h2>Upcoming Events</h2>
+        <div id="upcomingEvents" class="upcoming-list"></div>
+      </section>
+
+      <section class="contact-section">
+        <h2>Contact Information</h2>
+        <p><span aria-hidden="true">✉</span> <a href="mailto:SAS.nimdta@hscni.net">SAS.nimdta@hscni.net</a></p>
+        <p><span aria-hidden="true">⌁</span> <a href="https://www.nimdta.gov.uk/" target="_blank" rel="noopener">www.nimdta.gov.uk</a></p>
+        <p><span aria-hidden="true">☎</span> <a href="tel:+442895360501">028 9536 0501</a></p>
+      </section>
+    </aside>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop" hidden>
+    <article class="event-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header id="modalHeader" class="modal-header">
+        <span id="modalFormatIcon" class="modal-format-icon" aria-hidden="true"></span>
+        <h2 id="modalTitle"></h2>
+        <button id="closeModal" class="close-modal" type="button" aria-label="Close event details">×</button>
+      </header>
+      <div id="modalBody" class="modal-body"></div>
+    </article>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
