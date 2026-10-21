@@ -125,7 +125,7 @@ button:focus-visible, a:focus-visible, .event-card:focus-visible, .upcoming-card
   font-weight: 700;
   text-transform: uppercase;
 }
-.weekday:nth-child(7) { border-right: 0; }
+.weekday:nth-child(7) { border-right: 0; margin-right: -1px;}
 .day-cell {
   min-height: 132px;
   padding: 7px 7px 8px;
