@@ -87,3 +87,10 @@ The project is fully static and is ready for GitHub Pages. Repository visibility
 ## Font
 
 The interface uses Open Sans when available, with Arial and Helvetica as fallbacks. No Google Fonts dependency is used because Google services may be blocked on organisational systems. A local Open Sans web-font file can be added later if required.
+
+## Version 5 refinements
+
+- Added the missing Event event type and purple colour key.
+- Improved mobile touch targets, horizontal calendar scrolling, responsive logos, sidebar stacking and modal sizing.
+- Rebalanced font weights for clearer reading.
+- Updated the initial event-type colour palette.

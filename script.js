@@ -1,29 +1,31 @@
 'use strict';
 
 const EVENT_TYPES = {
-  'generic capabilities': { label: 'Generic Capabilities', colour: '#18cf32' },
-  'course': { label: 'Course', colour: '#ef8bdb' },
-  'other event': { label: 'Other Event', colour: '#202d35' },
-  'qi course': { label: 'QI Course', colour: '#6dc9ea' },
-  'portfolio pathway': { label: 'Portfolio Pathway', colour: '#f5b941' },
-  'development fund': { label: 'Development Fund', colour: '#f47d61' }
+  'generic capabilities': { label: 'Generic Capabilities', colour: '#009380', textColour: '#ffffff' },
+  'course': { label: 'Course', colour: '#f2d3d8', textColour: '#263943' },
+  'qi course': { label: 'QI Course', colour: '#0cc0df', textColour: '#ffffff' },
+  'sas event': { label: 'SAS Event', colour: '#8b46ff', textColour: '#ffffff' },
+  'resources': { label: 'Resources', colour: '#ffd66e', textColour: '#263943' },
+  'development fund': { label: 'Development Fund', colour: '#ffa981', textColour: '#263943' },
+  'other event': { label: 'Other Event', colour: '#444444', textColour: '#ffffff' }
 };
-
+const EVENT_TYPE_ALIASES = {
+  'event': 'sas event',
+  'portfolio pathway': 'resources'
+};
 const STATUSES = {
-  'coming soon': { label: 'Coming Soon', colour: '#f6ef8c' },
-  'open for booking': { label: 'Open for Booking', colour: '#b9ef73' },
-  'fully booked': { label: 'Fully Booked', colour: '#ff743d' },
-  'date to be confirmed': { label: 'Date to be confirmed', colour: '#e8a7d8' }
+  'coming soon': { label: 'Coming Soon', colour: '#ffeab6', textColour: '#263943' },
+  'open for booking': { label: 'Open for Booking', colour: '#7ed957', textColour: '#263943' },
+  'fully booked': { label: 'Fully Booked', colour: '#ff6f2c', textColour: '#ffffff' },
+  'date to note': { label: 'Date to note', colour: '#ff66c4', textColour: '#263943' }
 };
-
 const FORMATS = {
-  'face to face': { label: 'Face to Face', icon: '♧' },
-  'virtual': { label: 'Virtual', icon: '▣' },
-  'flagship': { label: 'Flagship', icon: '⚑' },
-  'deadline': { label: 'Deadline', icon: '◴' },
-  'celebration': { label: 'Celebration', icon: '⌁' }
+  'face to face': { label: 'Face to Face', icon: 'assets/face-to-face.svg' },
+  'virtual': { label: 'Virtual', icon: 'assets/virtual.svg' },
+  'flagship': { label: 'Flagship', icon: 'assets/flagship.svg' },
+  'deadline': { label: 'Deadline', icon: 'assets/deadline.svg' },
+  'celebration': { label: 'Celebration', icon: 'assets/celebration.svg' }
 };
-
 const state = {
   events: [],
   visibleMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
@@ -103,9 +105,6 @@ function parseUkDate(value) {
   return date;
 }
 
-function isPublished(value) {
-  return ['yes', 'y', 'true', '1', 'x'].includes(normalise(value));
-}
 
 function getField(record, ...names) {
   for (const name of names) {
@@ -126,7 +125,6 @@ function mapRecord(record) {
     venue: getField(record, 'venue details', 'venue'),
     status: getField(record, 'status'),
     format: getField(record, 'format', 'type'),
-    publish: getField(record, 'publish'),
     row: record._row
   };
 }
@@ -138,22 +136,27 @@ function escapeHtml(value) {
 }
 
 function eventTypeDetails(value) {
-  return EVENT_TYPES[normalise(value)] || { label: value || 'Other Event', colour: '#51626b' };
+  const enteredKey = normalise(value);
+  const key = EVENT_TYPE_ALIASES[enteredKey] || enteredKey;
+  return EVENT_TYPES[key] || { label: value || 'Other Event', colour: '#51626b', textColour: '#ffffff' };
 }
 function statusDetails(value) {
-  return STATUSES[normalise(value)] || { label: value, colour: '#9aa3a8' };
+  return STATUSES[normalise(value)] || { label: value, colour: '#9aa3a8', textColour: '#ffffff' };
 }
 function formatDetails(value) {
-  return FORMATS[normalise(value)] || { label: value, icon: '•' };
+  return FORMATS[normalise(value)] || { label: value, icon: '' };
 }
 
+function iconStyle(format) {
+  return format && format.icon ? `style="--icon-url:url('${escapeHtml(format.icon)}')"` : '';
+}
 function sameDay(first, second) {
   return first && second && first.getFullYear() === second.getFullYear() && first.getMonth() === second.getMonth() && first.getDate() === second.getDate();
 }
 
 function renderLegends() {
   elements.eventTypeLegend.innerHTML = Object.values(EVENT_TYPES).map(item =>
-    `<span class="type-tag" style="background:${item.colour}">${escapeHtml(item.label)}</span>`
+    `<span class="type-tag" style="background:${item.colour};color:${item.textColour}">${escapeHtml(item.label)}</span>`
   ).join('');
 
   elements.statusLegend.innerHTML = Object.values(STATUSES).map(item =>
@@ -161,7 +164,7 @@ function renderLegends() {
   ).join('');
 
   elements.formatLegend.innerHTML = Object.values(FORMATS).map(item =>
-    `<div class="legend-row"><span class="legend-icon" aria-hidden="true">${item.icon}</span><span>${escapeHtml(item.label)}</span></div>`
+    `<div class="legend-row"><span class="legend-icon" aria-hidden="true">${item.icon ? `<span class="svg-format-icon" ${iconStyle(item)}></span>` : ''}</span><span>${escapeHtml(item.label)}</span></div>`
   ).join('');
 }
 
@@ -191,9 +194,9 @@ function renderCalendar() {
       const status = event.status ? statusDetails(event.status) : null;
       const format = event.format ? formatDetails(event.format) : null;
       const eventIndex = state.events.indexOf(event);
-      return `<button type="button" class="event-card" data-event-index="${eventIndex}" style="background:${type.colour}" aria-label="Open details for ${escapeHtml(event.name)}">
+      return `<button type="button" class="event-card" data-event-index="${eventIndex}" style="background:${type.colour};color:${type.textColour}" aria-label="Open details for ${escapeHtml(event.name)}">
         <span class="event-name">${escapeHtml(event.name)}</span>
-        <span class="event-card-footer">${format ? `<span class="format-icon" aria-hidden="true">${format.icon}</span>` : ''}</span>
+        <span class="event-card-footer">${format ? `<span class="format-icon" aria-hidden="true">${format.icon ? `<span class="svg-format-icon" ${iconStyle(format)}></span>` : ''}</span>` : ''}</span>
         ${status ? `<span class="status-dot" style="background:${status.colour}" title="${escapeHtml(status.label)}"></span>` : ''}
       </button>`;
     }).join('');
@@ -231,8 +234,8 @@ function renderUpcoming() {
     const type = eventTypeDetails(event.eventType);
     const format = event.format ? formatDetails(event.format) : null;
     const eventIndex = state.events.indexOf(event);
-    return `<button type="button" class="upcoming-card" data-event-index="${eventIndex}" style="background:${type.colour}">
-      <strong>${format ? `<span aria-hidden="true">${format.icon}</span> ` : ''}${escapeHtml(event.name)}</strong>
+    return `<button type="button" class="upcoming-card" data-event-index="${eventIndex}" style="background:${type.colour};color:${type.textColour}">
+      <strong>${format ? `<span class="upcoming-format-icon" aria-hidden="true"><span class="svg-format-icon" ${iconStyle(format)}></span></span>` : ''}${escapeHtml(event.name)}</strong>
       <time datetime="${event.date.toISOString().slice(0, 10)}">${escapeHtml(event.dateText)}</time>
     </button>`;
   }).join('');
@@ -248,8 +251,9 @@ function openModal(event, trigger) {
   const status = event.status ? statusDetails(event.status) : null;
   const format = event.format ? formatDetails(event.format) : null;
   elements.modalHeader.style.background = type.colour;
+  elements.modalHeader.style.color = type.textColour;
   elements.modalTitle.textContent = event.name;
-  elements.modalFormatIcon.textContent = format ? format.icon : '';
+  elements.modalFormatIcon.innerHTML = format && format.icon ? `<span class="svg-format-icon" ${iconStyle(format)}></span>` : '';
 
   const dateDetails = [
     `<p>${escapeHtml(event.dateText)}</p>`,
@@ -258,12 +262,12 @@ function openModal(event, trigger) {
   ].filter(Boolean).join('');
 
   elements.modalBody.innerHTML = `
-    ${status ? `<div class="modal-status"><span class="legend-dot" style="background:${status.colour}"></span><span class="status-pill" style="background:${status.colour};color:${normalise(event.status) === 'coming soon' ? '#35434a' : '#fff'}">${escapeHtml(status.label)}</span></div>` : ''}
+    ${status ? `<div class="modal-status"><span class="legend-dot" style="background:${status.colour}"></span><span class="status-pill" style="background:${status.colour};color:${status.textColour}">${escapeHtml(status.label)}</span></div>` : ''}
     <div class="detail-row"><span class="detail-icon" aria-hidden="true">◷</span><div class="detail-lines">${dateDetails}</div></div>
     ${event.venue ? `<div class="detail-row"><span class="detail-icon" aria-hidden="true">⌖</span><div class="detail-lines"><p>${escapeHtml(event.venue)}</p></div></div>` : ''}
     ${(event.eventType || event.format) ? '<hr class="modal-divider">' : ''}
     <dl>
-      ${event.eventType ? `<div class="detail-meta"><dt>Event type:</dt><dd><span class="detail-pill" style="background:${type.colour}">${escapeHtml(type.label)}</span></dd></div>` : ''}
+      ${event.eventType ? `<div class="detail-meta"><dt>Event type:</dt><dd><span class="detail-pill" style="background:${type.colour};color:${type.textColour}">${escapeHtml(type.label)}</span></dd></div>` : ''}
       ${event.format ? `<div class="detail-meta"><dt>Format:</dt><dd><span class="detail-pill format-pill">${escapeHtml(format.label)}</span></dd></div>` : ''}
     </dl>`;
 
@@ -284,9 +288,9 @@ async function loadEvents() {
     if (!response.ok) throw new Error(`events.csv returned ${response.status}`);
     const records = parseCsv(await response.text());
     const mapped = records.map(mapRecord);
-    const invalid = mapped.filter(event => isPublished(event.publish) && (!event.name || !event.date));
+    const invalid = mapped.filter(event => !event.name || !event.date);
     state.events = mapped
-      .filter(event => isPublished(event.publish) && event.name && event.date)
+      .filter(event => event.name && event.date)
       .sort((a, b) => a.date - b.date || a.name.localeCompare(b.name));
 
     elements.loadMessage.textContent = invalid.length
